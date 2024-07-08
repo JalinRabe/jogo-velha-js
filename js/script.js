@@ -1,5 +1,5 @@
 // Seleciona todos os elementos com a clase "cell" - (células do tabuleiro)
-const cell = Document.querySelectorALL('.cell');
+const cells = document.querySelectorAll('.cell');
 
 // Selecionar o botão de reiniciar jogo
 const restartButton = document.querySelector('.restart-btn');
@@ -29,7 +29,7 @@ const winningCombinations = [
 // Função de clique na célula
 function cellClick(event) {
     const cell = event.target;
-    const cellIndex = cell.getAttribute('dat-index');
+    const cellIndex = cell.getAttribute('data-index');
 
     // Verifica se a célula está preenchida ou se o jogo acabou
     if (gameState[cellIndex] !== "" || checkWinner()) {
@@ -43,9 +43,36 @@ function cellClick(event) {
     // Verifica se há um vencedor ou empate
     if (checkWinner()) {
         gameStatus.textContent = `Jogador ${initialPlayer} venceu!`;
-    } else (!gameStateincludes("")) {
+    } else if (!gameState.includes("")) {
         gameStatus.textContent = 'Enpate!';        
-    }else {
+    } else {
+        // Passa para o priximo JoJo
        initialPlayer = initialPlayer === 'X' ? 'O' : 'X';
     }
 }
+
+function checkWinner() {
+    return winningCombinations.some(combination => {
+       return combination.every(index => {
+        return gameState[index] === initialPlayer
+       });
+    });
+}
+
+// Função para reiniciar o jogo
+function restartGame() {
+   gameState = ["", "", "", "", "", "", "", "", "",];
+   initialPlayer = 'X';
+   cells.forEach(cell => {
+    cell.textContent = '';
+   }); 
+   gameStatus.textContent = '';
+}
+
+// Adicionando um ouvinte de evento de clique a cada célula
+cells.forEach(cell =>{
+    cell.addEventListener('click', cellClick)
+})
+
+// Adicionando um ouvinte de evento de clique ao botão reiniciar
+restartButton.addEventListener('click', restartGame);
